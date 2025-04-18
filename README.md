@@ -40,7 +40,3 @@ Este proyecto fue creado por:
 
 - **Ing. Steven García Goñi**  
   Abril 2025
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
