@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Distribuciones Discretas Interactivas</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
+</head>
+<body>
+  <h2>Visualizador de Distribuciones Discretas</h2>
+
+  <label>
+    Distribución:
+    <select id="distribution" onchange="renderControls(); updatePlot();">
+      <option value="binomial">Binomial</option>
+      <option value="neg_binomial">Binomial Negativa</option>
+      <option value="poisson">Poisson</option>
+      <option value="hypergeometric">Hipergeométrica</option>
+    </select>
+  </label>
+
+  <div id="controls"></div>
+  <div id="plot" style="width: 100%; height: 500px;"></div>
+
+  <script>
+    function renderControls() {
+      const dist = document.getElementById("distribution").value;
+      const controls = document.getElementById("controls");
+      let html = "";
+
+      function controlSlider(id, label, min, max, value, step=1) {
+        return `
+          <label>
+            ${label}:
+            <input type="range" id="${id}" min="${min}" max="${max}" value="${value}" step="${step}" 
+              oninput="updatePlot(); document.getElementById(${id}-val).innerText = this.value;">
+            <span id="${id}-val">${value}</span>
+          </label><br>
+        `;
+      }
+
+      if (dist === "binomial") {
+        html += controlSlider("n", "n", 1, 50, 10);
+        html += controlSlider("p", "p", 0, 1, 0.5, 0.01);
+      } else if (dist === "neg_binomial") {
+        html += controlSlider("r", "Número de éxitos (r)", 1, 50, 10);
+        html += controlSlider("p", "p", 0, 1, 0.5, 0.01);
+      } else if (dist === "poisson") {
+        html += controlSlider("lambda", "λ", 0.1, 20, 4, 0.1);
+      } else if (dist === "hypergeometric") {
+        html += controlSlider("N", "Tamaño total (N)", 10, 100, 50);
+        html += controlSlider("K", "Éxitos en la población (K)", 1, 50, 10);
+        html += controlSlider("n", "Muestra (n)", 1, 50, 10);
+      }
+
+      controls.innerHTML = html;
+    }
+
+    function updatePlot() {
+      const dist = document.getElementById("distribution").value;
+      let x = [], y = [], trace = {};
+
+      if (dist === "binomial") {
+        const n = parseInt(document.getElementById("n").value);
+        const p = parseFloat(document.getElementById("p").value);
+        for (let i = 0; i <= n; i++) {
+          x.push(i);
+          y.push(jStat.binomial.pdf(i, n, p));
+        }
+        trace = { title: `Binomial (n=${n}, p=${p.toFixed(2)})` };
+
+      } else if (dist === "neg_binomial") {
+        const r = parseInt(document.getElementById("r").value);
+        const p = parseFloat(document.getElementById("p").value);
+        const max = r + 30;
+        for (let i = r; i <= max; i++) {
+          x.push(i - r);
+          y.push(jStat.negbin.pdf(i - r, r, p));
+        }
+        trace = { title: `Binomial Negativa (r=${r}, p=${p.toFixed(2)})` };
+
+      } else if (dist === "poisson") {
+        const lambda = parseFloat(document.getElementById("lambda").value);
+        for (let i = 0; i <= lambda * 3; i++) {
+          x.push(i);
+          y.push(jStat.poisson.pdf(i, lambda));
+        }
+        trace = { title: `Poisson (λ=${lambda.toFixed(2)})` };
+
+      } else if (dist === "hypergeometric") {
+        const N = parseInt(document.getElementById("N").value);
+        const K = parseInt(document.getElementById("K").value);
+        const n = parseInt(document.getElementById("n").value);
+        const minX = Math.max(0, n + K - N);
+        const maxX = Math.min(K, n);
+        for (let i = minX; i <= maxX; i++) {
+          x.push(i);
+          y.push(jStat.hypgeom.pdf(i, N, K, n));
+        }
+        trace = { title: `Hipergeométrica (N=${N}, K=${K}, n=${n})` };
+      }
+
+      Plotly.newPlot("plot", [{
+        x: x,
+        y: y,
+        type: "bar"
+      }], {
+        title: trace.title,
+        xaxis: { title: "x" },
+        yaxis: { title: "Probabilidad" }
+      });
+    }
+
+    window.onload = function() {
+      renderControls();
+      updatePlot();
+    };
+  </script>
+    <footer style="margin-top: 2em; font-size: 0.9em; text-align: center; color: gray;">
+    Creado por Ing. Steven García Goñi · Para la Cátedra de II-0306 Probabilidad y Estadística, de la Escuela de Ingeniería Industrial de la Universidad de Costa Rica · Abril 2025
+  </footer>
+</body>
+</html>
+
