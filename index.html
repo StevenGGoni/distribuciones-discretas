@@ -8,17 +8,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
 </head>
 <body>
-  <h2>Visualizador de Distribuciones Discretas</h2>
+  <h1>Visualizador interactivo de distribuciones discretas</h1>
 
   <label>
-    Distribución:
+    Seleccione una distribución:</label>
     <select id="distribution" onchange="renderControls(); updatePlot();">
       <option value="binomial">Binomial</option>
-      <option value="neg_binomial">Binomial Negativa</option>
+      <option value="neg_binomial">Binomial negativa</option>
       <option value="poisson">Poisson</option>
       <option value="hypergeometric">Hipergeométrica</option>
     </select>
-  </label>
+  
 
   <div id="controls"></div>
   <div id="plot" style="width: 100%; height: 500px;"></div>
@@ -34,7 +34,7 @@
           <label>
             ${label}:
             <input type="range" id="${id}" min="${min}" max="${max}" value="${value}" step="${step}" 
-              oninput="updatePlot(); document.getElementById(${id}-val).innerText = this.value;">
+              oninput="updatePlot(); document.getElementById('${id}-val').textContent = this.value;">
             <span id="${id}-val">${value}</span>
           </label><br>
         `;
@@ -73,10 +73,13 @@
       } else if (dist === "neg_binomial") {
         const r = parseInt(document.getElementById("r").value);
         const p = parseFloat(document.getElementById("p").value);
-        const max = r + 30;
-        for (let i = r; i <= max; i++) {
-          x.push(i - r);
-          y.push(jStat.negbin.pdf(i - r, r, p));
+        const mu = r * (1 - p) / p;
+        const sigma = Math.sqrt(r * (1 - p) / (p * p));
+        const max = Math.ceil(mu + 4 * sigma);
+
+        for (let i = 0; i <= max; i++) {
+          x.push(i);
+          y.push(jStat.negbin.pdf(i, r, p));
         }
         trace = { title: `Binomial Negativa (r=${r}, p=${p.toFixed(2)})` };
 
