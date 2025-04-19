@@ -21,8 +21,10 @@ Cada distribución tiene los siguientes controles:
 ## ¿Cómo usar?
 
 1. **Accede a la página**: Puedes abrir la visualización interactiva directamente desde este enlace:  
-   [Distribuciones Discretas Interactivas](https://tuusuario.github.io/distribuciones-discretas/) *(reemplazar con tu URL)*.
-   
+
+   [Distribuciones Discretas Interactivas](https://stevenggoni.github.io/distribuciones-discretas/)
+   [Distribuciones Discretas Interactivas](https://stevenggoni.github.io/distribuciones-discretas/) 
+
 2. **Selecciona la distribución**: Utiliza el menú desplegable para elegir la distribución de probabilidad que deseas visualizar.
 
 3. **Ajusta los parámetros**: Usa los deslizadores para modificar los parámetros y observa cómo cambia la distribución en tiempo real.
